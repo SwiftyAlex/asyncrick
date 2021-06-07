@@ -12,6 +12,7 @@ struct asyncrickApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(CharacterListViewModel())
         }
     }
 }
