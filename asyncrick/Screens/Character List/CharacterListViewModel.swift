@@ -25,7 +25,6 @@ class CharacterListViewModel: ObservableObject {
         // Fetch new
         async {
             do {
-                Thread.sleep(forTimeInterval: 1)
                 let characters = try await characterStore.fetchCharacters()
                 self.dataResult = .success(characters)
             } catch let erorr {
