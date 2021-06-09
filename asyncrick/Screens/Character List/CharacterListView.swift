@@ -10,6 +10,8 @@ import SwiftUI
 struct CharacterListView: View {
     
     @EnvironmentObject var characterListViewModel: CharacterListViewModel
+        
+    @State var searchText: String = ""
     
     var body: some View {
         ScrollView {
@@ -17,11 +19,20 @@ struct CharacterListView: View {
                 contentBody
             }
         }
+        .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), suggestions: {
+            if let characters = try? characterListViewModel.dataResult?.get() {
+                ForEach(characters.filter({ $0.name.starts(with: searchText )}), id: \.self) { character in
+                    Text(character.name)
+                        .searchCompletion(character.name)
+                }
+            }
+        })
         .navigationTitle("AsyncRick")
         .background(Color(uiColor: .systemGroupedBackground))
         .onAppear {
             characterListViewModel.loadData()
         }
+        
     }
 
     // MARK: - Child Views
@@ -29,7 +40,7 @@ struct CharacterListView: View {
     var contentBody: some View {
         switch characterListViewModel.dataResult {
             case .success(let characters):
-                characterList(from: characters)
+                characterList(from: characters.filter({ $0.name.hasPrefix(searchText )}))
             case .failure:
                 errorView
             case .none:
